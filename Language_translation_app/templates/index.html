@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LinguaAI — Language Translation</title>
+  <meta name="description" content="Instantly translate text between 100+ languages with LinguaAI — a beautiful, fast, and free language translation tool powered by Google Translate." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+  <!-- ── Background orbs ── -->
+  <div class="bg-orb orb-1" aria-hidden="true"></div>
+  <div class="bg-orb orb-2" aria-hidden="true"></div>
+  <div class="bg-orb orb-3" aria-hidden="true"></div>
+
+  <!-- ── Header ── -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">🌐</span>
+        <span class="logo-text">Lingua<span class="logo-accent">AI</span></span>
+      </div>
+      <div class="header-badge">
+        <span class="badge-dot"></span>
+        <span>100+ Languages</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Main Content ── -->
+  <main class="main-content">
+    <!-- Hero title -->
+    <div class="hero">
+      <h1 class="hero-title">Break the Language Barrier</h1>
+      <p class="hero-subtitle">Translate any text instantly across 100+ languages — powered by Google Translate</p>
+    </div>
+
+    <!-- Stats bar -->
+    <div class="stats-bar">
+      <div class="stat-item">
+        <span class="stat-number">100+</span>
+        <span class="stat-label">Languages</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-number">∞</span>
+        <span class="stat-label">Translations</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-number">🔊</span>
+        <span class="stat-label">Audio TTS</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-number">Free</span>
+        <span class="stat-label">No API Key</span>
+      </div>
+    </div>
+
+    <!-- ── Translation Card ── -->
+    <div class="card translation-card">
+
+      <!-- Language selector row -->
+      <div class="lang-row">
+        <!-- Source language -->
+        <div class="lang-group">
+          <label for="source-lang" class="lang-label">From</label>
+          <div class="select-wrapper">
+            <select id="source-lang" name="source_lang" class="lang-select" aria-label="Source language">
+              {% for name, code in languages.items() %}
+                <option value="{{ code }}" {% if name == 'Auto Detect' %}selected{% endif %}>{{ name }}</option>
+              {% endfor %}
+            </select>
+            <span class="select-arrow">▾</span>
+          </div>
+        </div>
+
+        <!-- Swap button -->
+        <button id="swap-btn" class="swap-btn" aria-label="Swap source and target languages" title="Swap languages">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M7 16V4m0 0L3 8m4-4l4 4"/>
+            <path d="M17 8v12m0 0l4-4m-4 4l-4-4"/>
+          </svg>
+        </button>
+
+        <!-- Target language -->
+        <div class="lang-group">
+          <label for="target-lang" class="lang-label">To</label>
+          <div class="select-wrapper">
+            <select id="target-lang" name="target_lang" class="lang-select" aria-label="Target language">
+              {% for name, code in languages.items() if name != 'Auto Detect' %}
+                <option value="{{ code }}" {% if name == 'English' %}selected{% endif %}>{{ name }}</option>
+              {% endfor %}
+            </select>
+            <span class="select-arrow">▾</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Text areas -->
+      <div class="panels">
+
+        <!-- Input panel -->
+        <div class="panel panel--input">
+          <div class="panel-header">
+            <span class="panel-tag">Source Text</span>
+            <div class="panel-actions">
+              <button id="clear-btn" class="icon-btn" aria-label="Clear text" title="Clear">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 6L6 18M6 6l12 12"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <textarea
+            id="source-text"
+            class="text-area"
+            placeholder="Type or paste text here to translate…"
+            rows="8"
+            maxlength="5000"
+            aria-label="Source text"
+            autofocus
+          ></textarea>
+          <div class="panel-footer">
+            <span id="char-count" class="char-count">0 / 5000</span>
+            <button id="speak-source-btn" class="icon-btn tts-btn" aria-label="Listen to source text" title="Listen">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+              </svg>
+              Listen
+            </button>
+          </div>
+        </div>
+
+        <!-- Arrow divider -->
+        <div class="panel-divider" aria-hidden="true">
+          <div class="divider-line"></div>
+          <div class="divider-arrow">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </div>
+          <div class="divider-line"></div>
+        </div>
+
+        <!-- Output panel -->
+        <div class="panel panel--output">
+          <div class="panel-header">
+            <span class="panel-tag">Translation</span>
+            <div class="panel-actions">
+              <button id="copy-btn" class="icon-btn copy-btn" aria-label="Copy translated text" title="Copy" disabled>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                </svg>
+                Copy
+              </button>
+            </div>
+          </div>
+          <div id="output-area" class="text-area output-area" aria-live="polite" aria-label="Translated text">
+            <span class="placeholder-text">Your translation will appear here…</span>
+          </div>
+          <div class="panel-footer">
+            <span id="output-info" class="char-count"></span>
+            <button id="speak-output-btn" class="icon-btn tts-btn" aria-label="Listen to translation" title="Listen to translation" disabled>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+              </svg>
+              Listen
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Translate button -->
+      <div class="translate-action">
+        <button id="translate-btn" class="translate-btn" aria-label="Translate text">
+          <span class="btn-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+          </span>
+          <span class="btn-text">Translate</span>
+          <span class="btn-loader" aria-hidden="true"></span>
+        </button>
+        <p class="shortcut-hint">Press <kbd>Ctrl</kbd> + <kbd>Enter</kbd> to translate</p>
+      </div>
+
+      <!-- Toast notification -->
+      <div id="toast" class="toast" role="alert" aria-live="assertive"></div>
+    </div>
+
+    <!-- ── Quick language chips ── -->
+    <div class="quick-langs">
+      <span class="quick-label">Quick pick:</span>
+      <div class="chips" id="quick-chips">
+        <button class="chip" data-lang="es" data-name="Spanish">🇪🇸 Spanish</button>
+        <button class="chip" data-lang="fr" data-name="French">🇫🇷 French</button>
+        <button class="chip" data-lang="de" data-name="German">🇩🇪 German</button>
+        <button class="chip" data-lang="ja" data-name="Japanese">🇯🇵 Japanese</button>
+        <button class="chip" data-lang="ko" data-name="Korean">🇰🇷 Korean</button>
+        <button class="chip" data-lang="hi" data-name="Hindi">🇮🇳 Hindi</button>
+        <button class="chip" data-lang="ar" data-name="Arabic">🇸🇦 Arabic</button>
+        <button class="chip" data-lang="zh-CN" data-name="Chinese (Simplified)">🇨🇳 Chinese</button>
+        <button class="chip" data-lang="pt" data-name="Portuguese">🇵🇹 Portuguese</button>
+        <button class="chip" data-lang="ru" data-name="Russian">🇷🇺 Russian</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- ── Footer ── -->
+  <footer class="site-footer">
+    <p>Built with ❤️ using Python + Flask + Google Translate · <span class="footer-highlight">CodeAlpha Project</span></p>
+  </footer>
+
+  <!-- Audio player (hidden) -->
+  <audio id="audio-player" aria-hidden="true"></audio>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
